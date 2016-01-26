@@ -194,7 +194,7 @@ class IOProfiler
 	 *
 	 * The counter represents the number of times a unique identifier was
 	 * logged within a specific class.  The time integer is the total number of
-	 * microseconds spent on this unique entry.
+	 * milliseconds spent on this unique entry.
 	 *
 	 * Special class '__TOTALS' holds handy totals per entire classes (i.e. how
 	 * many microseconds were spent on 'sql' overall) and its special entry
