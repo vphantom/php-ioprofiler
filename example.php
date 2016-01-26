@@ -30,4 +30,6 @@ $report_data = $profile->report_data();
 
 print_r($report_data);
 
+print $profile->report_html($report_data);
+
 ?>
