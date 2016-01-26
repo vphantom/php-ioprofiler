@@ -5,20 +5,18 @@ Gather and report timing information
 ## Example:
 
 ```php
+IOProfiler::enable();
+$profile = new IOProfiler();  // Timer starts
+usleep(500000);  # 0.500 sec
+ 
+// Time something...
+$start = IOProfiler::now();
+usleep(750000);  # 0.750 sec
+$profile->log('test', '123456789', $start);
 
-
- * IOProfiler::enable();
- * $profile = new IOProfiler();  // Timer starts
- * usleep(500000);  # 0.500 sec
- *
- * // Time something...
- * $start = IOProfiler::now();
- * usleep(750000);  # 0.750 sec
- * $profile->log('test', '123456789', $start);
- *
- * // Results can be data or an HTML table
- * print_r($profile->report_data());
- * print($profile->report_html());
+// Results can be data or an HTML table
+print_r($profile->report_data());
+print($profile->report_html());
 ```
 
 The basic syntax of storing a start timestamp from now(), invoking your I/O
