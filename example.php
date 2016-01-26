@@ -4,7 +4,7 @@ require_once('IOProfiler.php');
 
 IOProfiler::enable();
 
-$profile = new IOProfiler();
+$profile = new IOProfiler();  // Timer starts
 
 usleep(500000);  # 0.500 sec
 
@@ -22,7 +22,7 @@ $profile->log('test', 'different', $start);
 
 $start = IOProfiler::now();
 usleep(80000);  # 0.080 sec
-$profile->log('test2', '123456789', $start);
+$profile->log('Sql', ' Delete From roger extra chars', $start);
 
 usleep(20000);  # 0.020 sec
 

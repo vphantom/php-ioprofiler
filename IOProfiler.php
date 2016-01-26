@@ -7,14 +7,28 @@
  * Makes use of gettimeofday() which your system must support (most seem to).
  *
  * Example:
+ * require_once('IOProfiler.php');
  *
- * IOProfiler::enable();
- * $profile = new IOProfiler();
+ * IOProfiler::enable();  // Toggle global on/off switch
+ *
+ * $profile = new IOProfiler();  // Timers are instances
+ *
  * usleep(500000);  # 0.500 sec
- * $start = $profile::now();
+ *
+ * // Time something...
+ * $start = IOProfiler::now();
  * usleep(750000);  # 0.750 sec
  * $profile->log('test', '123456789', $start);
+ *
+ * // Results can be data or an HTML table
  * print_r($profile->report_data());
+ * print($profile->report_html());
+ *
+ * The basic syntax of storing a start timestamp from now(), invoking your I/O
+ * code, and then telling it to log() is to allow nesting: maybe your
+ * lower-level module is also using the same instance of IOProfiler.  This
+ * edge case would probably cause negative script total time but would reveal
+ * interesting details about at which depth in your stack time is spent.
  *
  * PHP version 5
  *
@@ -111,12 +125,10 @@ class IOProfiler
 	 * and multiple calls for the same will increment its occurence and time
 	 * counters.
 	 *
-	 * Class "sql" is processed a little bit: if their unique identifier's
-	 * first non-whitespace word is one of DELETE, INSERT, REPLACE, UPDATE it
-	 * is truncated to 32 characters.  Also, all whitespace is collapsed to a
-	 * single space to help catch duplicates.
-	 *
-	 * TODO: Actually truncate SQL queries after the name of the table instead.
+	 * Class "sql" (case-insensitive) is processed a little bit: if their
+	 * unique identifier's first non-whitespace word is one of DELETE, INSERT,
+	 * REPLACE, UPDATE it is truncated to 32 characters.  Also, all whitespace
+	 * is collapsed to a single space to help catch duplicates.
 	 *
 	 * @param string $class  Category of operation (i.e. sql, sphinx, file)
 	 * @param string $unique Identity of the operation (i.e. a full SQL query)
@@ -133,11 +145,9 @@ class IOProfiler
 		$duration = $this->now() - $start;
 
 		// Pre-process certain cases
-		if ($class === 'sql') {
-			// TODO: Collapse all whitespace into a single space
-			// TODO: Remove initial and trailing whitespace
-			// TODO: Actually fetch the first non-whitespace word
-			$firstword = strtoupper('');
+		if (strtoupper($class) === 'SQL') {
+			$unique = trim(preg_replace('/\s+/', ' ', $unique));
+			$firstword = strtoupper(strstr($unique, ' ', true));
 			switch ($firstword) {
 				case 'DELETE':
 				case 'INSERT':
@@ -231,9 +241,9 @@ class IOProfiler
 	/**
 	 * Produce HTML table from report data
 	 *
-	 * A quick-and-dirty TABLE is returned, with one row per unique identifier
-	 * detailing its counter and cumulative timer.  A footer is appended with
-	 * global counters and timers.
+	 * A quick-and-dirty TABLE is returned, with CSS class "ioprofiler"
+	 * containing one row per unique identifier detailing its counter and
+	 * cumulative timer.  A footer is appended with global counters and timers.
 	 *
 	 * @param array $report_data (Optional.)
 	 *
@@ -245,13 +255,34 @@ class IOProfiler
 			return;
 		}
 
-		$r = '';
+		$r = "<table class=\"ioprofiler\">\n";
 		if ($report_data === null) {
 			$report_data = $this->report_data();
 		}
+		$total_time = $report_data['__TOTALS']['__SCRIPT']['total_time'];
 
-		// TODO: Iterate per the description
+		foreach ($report_data as $class => $entries) {
+			if ($class !== '__TOTALS') {
+				$r .= "\t<thead><tr><th>#</th><th>Dups</th><th>{$class} Operation</th><th>Duration</th></tr></thead>\n";
+				$i = 1;
+				$r .= "\t<tbody>\n";
+				foreach ($entries as $unique => $counters) {
+					$r .= "\t\t<tr><td>".$i++."</td><td>{$counters['count']}</td><td>{$unique}</td><td>{$counters['time']} ms</td></tr>\n";
+				}
+				$r .= "\t</tbody>\n";
+			}
+		}
 
+		$r .= "\t<tfoot><tr><th colspan=\"4\">\n";
+		foreach ($report_data['__TOTALS'] as $class => $counters) {
+			if ($class !== '__SCRIPT') {
+				$r .= "\t\t{$counters['time']} ms (". (int)((100*$counters['time'])/$total_time) ."%) on <u>{$counters['count']}</u> {$class} operations<br />\n";
+			}
+		}
+		$r .= "\t\t{$report_data['__TOTALS']['__SCRIPT']['time']} ms (". (int)((100*$report_data['__TOTALS']['__SCRIPT']['time'])/$total_time) ."%) on PHP and unmetered I/O<br />\n";
+		$r .= "\t\tTOTAL {$total_time} ms\n";
+		$r .= "\t</tfoot>\n";
+		$r .= "</table>\n";
 		return $r;
 	}
 
