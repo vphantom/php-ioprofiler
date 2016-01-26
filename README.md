@@ -5,8 +5,12 @@ Gather and report timing information
 ## Example:
 
 ```php
-IOProfiler::enable();
-$profile = new IOProfiler();  // Timer starts
+require_once('IOProfiler.php');
+
+IOProfiler::enable();  // Toggle global on/off switch
+
+$profile = new IOProfiler();  // Timers are instances
+
 usleep(500000);  # 0.500 sec
  
 // Time something...
