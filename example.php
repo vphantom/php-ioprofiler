@@ -22,7 +22,7 @@ $profile->log('test', 'different', $start);
 
 $start = IOProfiler::now();
 usleep(80000);  # 0.080 sec
-$profile->log('Sql', ' Delete From roger extra chars', $start);
+$profile->log('Sql', ' Delete   From roger extra chars', $start);
 
 usleep(20000);  # 0.020 sec
 

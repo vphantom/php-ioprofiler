@@ -146,17 +146,30 @@ class IOProfiler
 
 		// Pre-process certain cases
 		if (strtoupper($class) === 'SQL') {
+			$sql_statements = Array(
+				'DELETE', 'INSERT', 'REPLACE', 'UPDATE',
+			);
+			$sql_modifiers = Array(
+				'LOW_PRIORITY', 'QUICK', 'DELAYED', 'INTO', 'IGNORE', 'FROM', 'HIGH_PRIORITY'
+			);
+
 			$unique = trim(preg_replace('/\s+/', ' ', $unique));
-			$firstword = strtoupper(strstr($unique, ' ', true));
-			switch ($firstword) {
-				case 'DELETE':
-				case 'INSERT':
-				case 'REPLACE':
-				case 'UPDATE':
-					$unique = substr($unique, 0, 32);
-					break;
-				default:
+
+			$tokens = explode(' ', $unique, 8);
+			$next = array_shift($tokens);
+			$next_uc = strtoupper($next);
+			if (in_array($next_uc, $sql_statements)) {
+				$unique = $next_uc;
+				$next = array_shift($tokens);
+				$next_uc = strtoupper($next);
+				while (in_array($next_uc, $sql_modifiers)) {
+					$unique .= ' '.$next_uc;
+					$next = array_shift($tokens);
+					$next_uc = strtoupper($next);
+				}
+				$unique .= ' '.$next;
 			}
+
 		}
 
 		if (!array_key_exists($class, $this->_timers)) {
