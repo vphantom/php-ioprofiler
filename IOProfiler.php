@@ -286,7 +286,7 @@ class IOProfiler
                 $i = 1;
                 $r .= "\t<tbody>\n";
                 foreach ($entries as $unique => $counters) {
-                    $r .= "\t\t<tr><td>".$i++."</td><td>{$counters['count']}</td><td>{$unique}</td><td>{$counters['time']} ms</td></tr>\n";
+                    $r .= "\t\t<tr><td>".$i++."</td><td>{$counters['count']}</td><td>".htmlspecialchars($unique, ENT_NOQUOTES)."</td><td>{$counters['time']} ms</td></tr>\n";
                 }
                 $r .= "\t</tbody>\n";
             }
