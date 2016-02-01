@@ -90,6 +90,16 @@ class IOProfiler
     }
 
     /**
+     * Get profiler status
+     *
+     * @return bool
+     */
+    public static function isEnabled()
+    {
+        return self::$_enabled;
+    }
+
+    /**
      * Get a fresh timestamp, in milliseconds
      *
      * Note that this timestamp is not "milliseconds since EPOCH" because we
