@@ -142,9 +142,9 @@ class IOProfiler
      *
      * Class "sql" (case-insensitive) has its whitespace collapsed to help
      * catch duplicates.  Further, if their unique identifier's first word is
-     * one of DELETE, INSERT, REPLACE, UPDATE, it is truncated after the
-     * following table name.  Typical keywords found between the two are safely
-     * kept.  (i.e. "INTO", "FROM", etc.)
+     * one of INSERT, REPLACE, UPDATE, it is truncated after the following
+     * table name.  Typical keywords found between the two are safely kept.
+     * (i.e. "INTO", "FROM", etc.)
      *
      * @param string $class  Category of operation (i.e. sql, sphinx, file)
      * @param string $unique Identity of the operation (i.e. a full SQL query)
@@ -163,7 +163,7 @@ class IOProfiler
         // Pre-process certain cases
         if (strtoupper($class) === 'SQL') {
             $sql_statements = Array(
-                'DELETE', 'INSERT', 'REPLACE', 'UPDATE',
+                'INSERT', 'REPLACE', 'UPDATE',
             );
             $sql_modifiers = Array(
                 'LOW_PRIORITY', 'QUICK', 'DELAYED', 'INTO', 'IGNORE', 'FROM', 'HIGH_PRIORITY'
