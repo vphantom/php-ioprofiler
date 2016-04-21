@@ -1,7 +1,5 @@
 <?php declare(encoding = 'utf-8');
 
-/* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
-
 /**
  * IOProfiler
  *
@@ -39,8 +37,8 @@
  * @package   IOProfiler
  * @author    Stéphane Lavergne <lis@imars.com>
  * @copyright 2010-2016 Stéphane Lavergne
- * @license   http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL version 3
- * @link      https://github.com/VPhantom/php-ioprofiler
+ * @license   https://opensource.org/licenses/MIT  MIT License
+ * @link      https://github.com/vphantom/php-ioprofiler
  */
 
 /**
@@ -50,8 +48,8 @@
  * @package   IOProfiler
  * @author    Stéphane Lavergne <lis@imars.com>
  * @copyright 2010-2016 Stéphane Lavergne
- * @license   http://www.gnu.org/licenses/gpl-3.0.txt  GNU GPL version 3
- * @link      https://github.com/VPhantom/php-ioprofiler
+ * @license   https://opensource.org/licenses/MIT  MIT License
+ * @link      https://github.com/vphantom/php-ioprofiler
  */
 class IOProfiler
 {
